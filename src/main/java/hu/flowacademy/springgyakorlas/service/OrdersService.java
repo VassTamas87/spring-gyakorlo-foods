@@ -3,6 +3,7 @@ package hu.flowacademy.springgyakorlas.service;
 import hu.flowacademy.springgyakorlas.exception.ValidateException;
 import hu.flowacademy.springgyakorlas.model.Orders;
 import hu.flowacademy.springgyakorlas.model.Users;
+import hu.flowacademy.springgyakorlas.repository.FoodRepository;
 import hu.flowacademy.springgyakorlas.repository.OrdersRepository;
 import hu.flowacademy.springgyakorlas.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ public class OrdersService {
 
     private final OrdersRepository ordersRepository;
     private final UserRepository userRepository;
+    private final FoodRepository foodRepository;
 
     public Orders save(Orders order) {
         validate(order);
@@ -56,6 +58,9 @@ public class OrdersService {
         }
         if (order.getFoodOrders().stream().anyMatch(el -> el.getId() == null)) {
             throw new ValidateException("hiányzik az id!!!");
+        }
+        if (order.getFoodOrders().stream().anyMatch(el -> !foodRepository.existsById(el.getId()))) {
+            throw new ValidateException("nincs ilyen étel!!!");
         }
     }
 }
